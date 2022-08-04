@@ -2,10 +2,14 @@ package sg.edu.rp.c346.id20045524.mymovies;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -96,39 +100,6 @@ public class EditActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
 
-                        //The below spinner function cause Update Function to not work.
-//                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                            @Override
-//                            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-//                                String ratingLabel = adapterView.getItemAtPosition(position).toString();
-//                                if(!ratingLabel.equals("--")){
-//                                    data.setTitle(title);
-//                                    data.setGenre(genre);
-//                                    data.setYear(getYearNum);
-//                                    data.setRating(ratingLabel);
-//                                    long updateded_id = dbh.updateMovie(data);
-//                                    if (updateded_id != -1){
-//                                        Toast.makeText(EditActivity.this, "Update successful",
-//                                                Toast.LENGTH_SHORT).show();
-//                                        finish();
-//                                        Log.i("Update", "Update successful");
-//                                    } else {
-//                                        Toast.makeText(EditActivity.this, "Update failed",
-//                                                Toast.LENGTH_SHORT).show();
-//                                        Log.i("Update", "Update failed");
-//                                    }
-//                                } else {
-//                                    Toast.makeText(EditActivity.this, "Please set a rating!",
-//                                            Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//                            }
-//                        });
-
                     } else {
                         Toast.makeText(EditActivity.this, "Input Numbers only!",
                                 Toast.LENGTH_SHORT).show();
@@ -143,10 +114,41 @@ public class EditActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBHelper dbh = new DBHelper(EditActivity.this);
-                dbh.deleteMovie(data.getId());
-                finish();
-                Log.d("Finish", "Go Back");
+                // Inflate the confirm_delete.xml layout file
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View viewDeleteDialog = inflater.inflate(R.layout.confirm_delete, null);
+
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(EditActivity.this);
+                myBuilder.setTitle("Delete Movie");
+
+                // Obtain the UI component in the confirm_delete.xml layout
+                // It needs to be defined as "final", so that it can used in the onClick() method later
+                final EditText etInput = viewDeleteDialog.findViewById(R.id.editTextInput);
+
+                myBuilder.setView(viewDeleteDialog);  // Set the view of the dialog
+
+                myBuilder.setCancelable(false);
+                myBuilder.setNeutralButton("Cancel", null);
+
+                myBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String message = etInput.getText().toString();
+                        if (message.equalsIgnoreCase("Delete")){
+                            DBHelper dbh = new DBHelper(EditActivity.this);
+                            dbh.deleteMovie(data.getId());
+                            finish();
+                            Log.d("Finish", "Go Back");
+                        } else {
+                            Toast.makeText(EditActivity.this, "Dismissing Deletion",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+
+                AlertDialog deleteDialog = myBuilder.create();
+                deleteDialog.show();
 
             }
         });
@@ -154,7 +156,22 @@ public class EditActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(EditActivity.this);
+
+                myBuilder.setTitle("Cancel Action");
+                myBuilder.setMessage("Are you sure you want to discard the changes?");
+                myBuilder.setCancelable(false);
+
+                myBuilder.setPositiveButton("Do Not Discard",null);
+                myBuilder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+
+                AlertDialog cancelDialog = myBuilder.create();
+                cancelDialog.show();
             }
         });
 

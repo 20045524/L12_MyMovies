@@ -75,29 +75,6 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
 
-//                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                            @Override
-//                            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-//                                String ratingLabel = adapterView.getItemAtPosition(position).toString();
-//                                if(!ratingLabel.equals("--")){
-//                                    long inserted_id = dbh.insertSong(title, genre, getYearNum, ratingLabel);
-//                                    if (inserted_id != -1){
-//                                        Toast.makeText(MainActivity.this, "Insert successful",
-//                                                Toast.LENGTH_SHORT).show();
-//                                        clear();
-//                                    }
-//                                } else {
-//                                    Toast.makeText(MainActivity.this, "Please set a rating!",
-//                                            Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//                            }
-//                        });
-
                     } else {
                         Toast.makeText(MainActivity.this, "Input Numbers only!",
                                 Toast.LENGTH_SHORT).show();
@@ -119,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //startActivity
-                Intent i = new Intent(MainActivity.this, ShowListActivity.class);
+                Intent i = new Intent(MainActivity.this, EnhancedDisplayActivity.class);
                 startActivity(i);
             }
         });
